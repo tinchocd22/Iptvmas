@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 # ⚠️ PONÉ TU M3U8 REAL AQUÍ
-STREAM_URL = "https://pvtn5y.envivoslatam.org/espnpremium/tracks-v1a1/mono.m3u8"
+STREAM_URL = "https://nowfutbol.xyz/vivo/?c=Superliga+Argentina&o=2"
 
 # ------------------------------------------------
 # PROXY STREAM (SIN NAVEGADOR)
