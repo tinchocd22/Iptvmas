@@ -1,0 +1,26 @@
+[build]
+builder = "NIXPACKS"
+
+[phases.setup]
+nixPkgs = [
+  "glib",
+  "nss",
+  "atk",
+  "at-spi2-atk",
+  "cups",
+  "dbus",
+  "libdrm",
+  "gtk3",
+  "xorg.libX11",
+  "xorg.libXcomposite",
+  "xorg.libXdamage",
+  "xorg.libXext",
+  "xorg.libXfixes",
+  "xorg.libXrandr",
+  "xorg.libxcb",
+  "xorg.libxshmfence",
+  "mesa"
+]
+
+[deploy]
+startCommand = "playwright install chromium && gunicorn iptv_pro:app"
