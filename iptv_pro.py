@@ -99,9 +99,21 @@ def obtener_stream_cache():
 # ==============================
 # RUTAS
 # ==============================
-@app.route("/")
-def home():
-    return "Servidor activo 🚀"
+@app.route("/espn")
+def espn():
+    link = obtener_stream_cache()
+
+    if not link:
+        return "Canal offline ❌"
+
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": WEB_URL
+    }
+
+    r = requests.get(link, headers=headers)
+
+    return Response(r.content, content_type="application/vnd.apple.mpegurl")
 
 
 @app.route("/espn")
@@ -110,6 +122,8 @@ def espn():
 
     if link:
         return redirect(link)
+    import requests
+from flask import Response
 
     return "Canal offline ❌"
 
