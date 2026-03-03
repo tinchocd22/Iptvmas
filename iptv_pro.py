@@ -43,7 +43,21 @@ def obtener_stream_real():
 
             page.goto(WEB_URL, timeout=60000)
 
-            # Espera máxima 8 segundos
+            # Esperar que cargue el player
+            page.wait_for_timeout(5000)
+
+            # 👇 INTENTAR CLICK EN VIDEO O BOTÓN PLAY
+            try:
+                page.click("video", timeout=3000)
+            except:
+                pass
+
+            try:
+                page.click("button", timeout=3000)
+            except:
+                pass
+
+            # Esperar que el stream se genere
             page.wait_for_timeout(8000)
 
             browser.close()
