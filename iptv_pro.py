@@ -1,11 +1,13 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, Response
 from playwright.sync_api import sync_playwright
+import requests
 import time
 import os
 
 app = Flask(__name__)
 
-WEB_URL = "https://nowfutbol.xyz/vivo/?c=Superliga+Argentina&o=2"
+# 🔴 PONÉ ACA TU URL
+WEB_URL = "ACA_PONES_TU_URLhttps://nowfutbol.xyz/vivo/?c=Superliga+Argentina&o=2"
 
 # ===== CACHE =====
 cache_stream = None
@@ -42,13 +44,10 @@ def obtener_stream_real():
             page.on("response", capturar)
 
             page.goto(WEB_URL, timeout=60000)
-            page.wait_for_timeout(5000)
+            page.wait_for_timeout(6000)
 
-            # 🔎 Ver si hay iframe
-            frames = page.frames
-            print("Frames encontrados:", len(frames))
-
-            for frame in frames:
+            # Intentar clickear dentro de frames
+            for frame in page.frames:
                 try:
                     frame.click("video", timeout=2000)
                 except:
@@ -58,16 +57,14 @@ def obtener_stream_real():
                 except:
                     pass
 
-            # También intentar en página principal
             try:
                 page.click("video", timeout=2000)
             except:
                 pass
 
-            page.wait_for_timeout(10000)
+            page.wait_for_timeout(8000)
 
             browser.close()
-
             return stream_url
 
     except Exception as e:
@@ -99,21 +96,9 @@ def obtener_stream_cache():
 # ==============================
 # RUTAS
 # ==============================
-@app.route("/espn")
-def espn():
-    link = obtener_stream_cache()
-
-    if not link:
-        return "Canal offline ❌"
-
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": WEB_URL
-    }
-
-    r = requests.get(link, headers=headers)
-
-    return Response(r.content, content_type="application/vnd.apple.mpegurl")
+@app.route("/")
+def home():
+    return "Servidor activo 🚀"
 
 
 @app.route("/espn")
@@ -128,16 +113,19 @@ def espn():
         "Referer": WEB_URL
     }
 
-    r = requests.get(link, headers=headers)
-
-    return Response(
-        r.content,
-        content_type="application/vnd.apple.mpegurl"
-    )
+    try:
+        r = requests.get(link, headers=headers, timeout=15)
+        return Response(
+            r.content,
+            content_type="application/vnd.apple.mpegurl"
+        )
+    except Exception as e:
+        print("❌ Error proxy:", e)
+        return "Error cargando stream ❌"
 
 
 # ==============================
-# SOLO PARA LOCAL
+# LOCAL (Render usa gunicorn)
 # ==============================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
