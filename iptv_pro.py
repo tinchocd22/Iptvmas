@@ -42,23 +42,29 @@ def obtener_stream_real():
             page.on("response", capturar)
 
             page.goto(WEB_URL, timeout=60000)
-
-            # Esperar que cargue el player
             page.wait_for_timeout(5000)
 
-            # 👇 INTENTAR CLICK EN VIDEO O BOTÓN PLAY
+            # 🔎 Ver si hay iframe
+            frames = page.frames
+            print("Frames encontrados:", len(frames))
+
+            for frame in frames:
+                try:
+                    frame.click("video", timeout=2000)
+                except:
+                    pass
+                try:
+                    frame.click("button", timeout=2000)
+                except:
+                    pass
+
+            # También intentar en página principal
             try:
-                page.click("video", timeout=3000)
+                page.click("video", timeout=2000)
             except:
                 pass
 
-            try:
-                page.click("button", timeout=3000)
-            except:
-                pass
-
-            # Esperar que el stream se genere
-            page.wait_for_timeout(8000)
+            page.wait_for_timeout(10000)
 
             browser.close()
 
